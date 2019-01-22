@@ -7,13 +7,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
-public class NetworkManager {
+class NetworkManager {
 
-    lateinit var photos: List<Photo>
+    private var photos: ArrayList<Photo> = ArrayList<Photo>()
 
     companion object {
         private val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl("http://jsonplaceholder.typicode.com/")
+                .baseUrl("https://jsonplaceholder.typicode.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         val photoService: PhotoService = retrofit.create(PhotoService::class.java)
@@ -31,13 +31,13 @@ public class NetworkManager {
             }
 
             override fun onResponse(call: Call<List<Photo>>?, response: Response<List<Photo>>?) {
-                response?.body()?.let { callback.onSuccess(it, false) }
+                response?.body()?.let { callback.onSuccess(it as ArrayList<Photo>, false) }
             }
         })
     }
 
     interface Callback {
-        fun onSuccess(photos: List<Photo>, cached: Boolean)
+        fun onSuccess(photos: ArrayList<Photo>, cached: Boolean)
         fun onError(networkError: Boolean)
     }
 }

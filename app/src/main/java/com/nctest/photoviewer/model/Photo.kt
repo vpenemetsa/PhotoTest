@@ -6,16 +6,16 @@ import com.google.gson.annotations.SerializedName
 
 class Photo() : Parcelable {
 
-    internal var id: Int = 0
+    var id: Int = 0
 
-    internal var albumId: Int = 0
+    var albumId: Int = 0
 
-    internal var title: String? = null
+    var title: String? = null
 
-    internal var url: String? = null
+    var url: String? = null
 
     @SerializedName("thumbnailUrl")
-    internal var thumbnail: String? = null
+    var thumbnail: String? = null
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
