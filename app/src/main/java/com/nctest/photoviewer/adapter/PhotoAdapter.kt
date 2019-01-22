@@ -13,14 +13,10 @@ import com.squareup.picasso.Picasso
 
 import java.util.ArrayList
 
-class PhotoAdapter(context: Context, photos: List<Photo>) : BaseAdapter() {
+class PhotoAdapter(context: Context) : BaseAdapter() {
 
     val data = ArrayList<Photo>()
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-    init {
-        this.data.addAll(photos)
-    }
 
     fun setData(photos: List<Photo>) {
         this.data.clear()

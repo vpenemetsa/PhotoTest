@@ -1,8 +1,8 @@
 package com.nctest.photoviewer
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.widget.GridView
 import com.nctest.photoviewer.adapter.PhotoAdapter
 import com.nctest.photoviewer.model.Photo
@@ -18,26 +18,33 @@ class MainActivity : AppCompatActivity() {
     private val networkManager: NetworkManager = NetworkManager()
 
     private lateinit var grid: GridView
+    private lateinit var refresh: SwipeRefreshLayout
+
+    private val callback: NetworkManager.Callback = object : NetworkManager.Callback {
+        override fun onSuccess(photos: ArrayList<Photo>, cached: Boolean) {
+            refresh.isRefreshing = false
+            adapter.setData(photos)
+        }
+
+        override fun onError(networkError: Boolean) {
+            refresh.isRefreshing = false
+            // Show no network error
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        grid = findViewById(R.id.grid_view)
+        setupViews()
+        setupInteractions()
+        adapter = PhotoAdapter(applicationContext)
+        grid.adapter = adapter
 
         if (savedInstanceState == null || !savedInstanceState.containsKey(PHOTOS_KEY)) {
-            networkManager.getData(object : NetworkManager.Callback {
-                override fun onSuccess(photos: ArrayList<Photo>, cached: Boolean) {
-                    adapter = PhotoAdapter(applicationContext, photos)
-                    grid.adapter = adapter
-                }
-
-                override fun onError(networkError: Boolean) {
-                    // Show no network error
-                }
-            }, false)
+            refresh.isRefreshing = true
+            networkManager.getData(callback, false)
         } else {
-            adapter = PhotoAdapter(applicationContext, savedInstanceState.getParcelableArrayList(PHOTOS_KEY))
-            grid.adapter = adapter
+            adapter.setData(savedInstanceState.getParcelableArrayList(PHOTOS_KEY))
         }
     }
 
@@ -45,6 +52,18 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         if (!adapter.isEmpty) {
             outState?.putParcelableArrayList(PHOTOS_KEY, adapter.data)
+        }
+    }
+
+    private fun setupViews() {
+        grid = findViewById(R.id.grid_view)
+        refresh = findViewById(R.id.refresh)
+    }
+
+    private fun setupInteractions() {
+        refresh.setOnRefreshListener {
+            refresh.isRefreshing = true
+            networkManager.getData(callback, true)
         }
     }
 }

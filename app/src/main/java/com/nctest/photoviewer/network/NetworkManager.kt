@@ -9,7 +9,7 @@ import java.io.IOException
 
 class NetworkManager {
 
-    private var photos: ArrayList<Photo> = ArrayList<Photo>()
+    private var photos: ArrayList<Photo> = ArrayList()
 
     companion object {
         private val retrofit: Retrofit = Retrofit.Builder()
