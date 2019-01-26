@@ -28,7 +28,7 @@ class PhotoAdapter(context: Context) : BaseAdapter() {
         return data.size
     }
 
-    override fun getItem(position: Int): Any {
+    override fun getItem(position: Int): Photo {
         return data[position]
     }
 
@@ -37,14 +37,8 @@ class PhotoAdapter(context: Context) : BaseAdapter() {
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val v: View
-        if (convertView == null) {
-            v = inflater.inflate(R.layout.photo_cell, null)
-        } else {
-            v = convertView
-        }
-
-        Picasso.get().load(data[position].thumbnail).into(v.findViewById<View>(R.id.thumbnail) as ImageView)
+        val v: View = convertView ?: inflater.inflate(R.layout.photo_cell, null)
+        Picasso.get().load(data[position].thumbnail).into(v.findViewById<ImageView>(R.id.thumbnail))
 
         return v
     }
